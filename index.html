@@ -49,15 +49,25 @@
       }
 
       fetch("https://young-unit-315a.noter001.workers.dev/", {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.status === "success" ? "✅ تمت العملية بنجاح!" : "⚠️ خطأ: " + data.message);
-        document.getElementById("form").reset();
-      })
+  method: "POST",
+  body: JSON.stringify(formData),
+  headers: { "Content-Type": "application/json" }
+})
+.then(response => response.json()) // تأكد من تحويل الرد إلى JSON
+.then(data => {
+  console.log("📩 Response from server:", data); // 🔍 طباعة الرد في وحدة التحكم
+  if (data.status === "success") {
+    alert("✅ تمت العملية بنجاح!");
+    document.getElementById("form").reset();
+  } else {
+    alert("⚠️ خطأ: " + data.message);
+  }
+})
+.catch(error => {
+  console.error("❌ خطأ في الشبكة:", error);
+  alert("⚠️ حدث خطأ أثناء إرسال البيانات.");
+});
+
       .catch(error => {
         console.error("خطأ:", error);
         alert("⚠️ حدث خطأ أثناء إرسال البيانات.");
