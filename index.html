@@ -19,13 +19,27 @@
       }
     }
 
-    function sendData() {
+    function sendData(event) {
+      event.preventDefault(); // منع إعادة تحميل الصفحة
+
+      let name = document.getElementById("name").value.trim();
+      let phone = document.getElementById("phone").value.trim();
+      let address = document.getElementById("address").value.trim();
+      let order = document.getElementById("order").value.trim();
+      let location = document.getElementById("location").value.trim();
+
+      // التحقق من القيم الفارغة قبل الإرسال
+      if (!name || !phone || !address || !order || !location) {
+        alert("المرجو ملء جميع الحقول قبل الإرسال!");
+        return;
+      }
+
       var formData = {
-        name: document.getElementById("name").value,
-        phone: document.getElementById("phone").value,
-        address: document.getElementById("address").value,
-        order: document.getElementById("order").value,
-        location: document.getElementById("location").value
+        name: name,
+        phone: phone,
+        address: address,
+        order: order,
+        location: location
       };
 
       fetch("https://young-unit-315a.noter001.workers.dev/", {
@@ -33,12 +47,16 @@
         body: JSON.stringify(formData),
         headers: { "Content-Type": "application/json" }
       })
-      .then(response => response.text())
+      .then(response => response.json()) // تحويل الرد إلى JSON
       .then(data => {
-        alert(data);
-        document.getElementById("form").reset();
+        if (data.status === "success") {
+          alert(data.message);
+          document.getElementById("form").reset(); // تفريغ الحقول بعد الإرسال
+        } else {
+          alert("خطأ: " + data.message);
+        }
       })
-      .catch(error => console.error("خطأ:", error));
+      .catch(error => alert("حدث خطأ أثناء الإرسال: " + error));
     }
   </script>
 </head>
@@ -56,6 +74,7 @@
 
     <label>order:</label>
     <select id="order">
+      <option value="">اختر منتجًا</option>
       <option value="منتج 1">منتج 1</option>
       <option value="منتج 2">منتج 2</option>
       <option value="منتج 3">منتج 3</option>
@@ -65,7 +84,7 @@
     <input type="text" id="location" readonly>
     <button type="button" onclick="getLocation()">Ma Position</button><br><br>
 
-    <button type="button" onclick="sendData()">إرسال</button>
+    <button type="submit" onclick="sendData(event)">إرسال</button>
   </form>
 </body>
 </html>
