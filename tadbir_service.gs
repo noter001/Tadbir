@@ -1,7 +1,14 @@
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.openById("1g5iK44QyOGrbE5i1_YBCmJe3RtyuF6EFfr1QHPRyCXM").getActiveSheet();
-    var data = JSON.parse(e.postData.contents);
+    
+    // التأكد من أن البيانات المدخلة هي JSON
+    var data;
+    try {
+      data = JSON.parse(e.postData.contents);
+    } catch (error) {
+      return sendResponse("error", "❌ بيانات غير صالحة، يرجى إرسال JSON صحيح.");
+    }
 
     // التحقق من الحقول الفارغة
     if (!data.name || !data.phone || !data.address || !data.order || !data.location) {
@@ -33,14 +40,28 @@ function doPost(e) {
   }
 }
 
-// دالة لإرسال الردود بصيغة JSON
+// دالة لإرسال الردود بصيغة JSON مع دعم CORS
 function sendResponse(status, message) {
-  return ContentService.createTextOutput(JSON.stringify({status: status, message: message}))
+  var response = ContentService.createTextOutput(JSON.stringify({status: status, message: message}))
     .setMimeType(ContentService.MimeType.JSON);
+
+  // إضافة رؤوس CORS لدعم الوصول من مصادر مختلفة
+  response.appendHeader('Access-Control-Allow-Origin', '*');
+  response.appendHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  return response;
 }
 
-// دعم CORS عند الحاجة
+// دعم CORS في دالة doGet
 function doGet(e) {
-  return ContentService.createTextOutput("Tadbir API is working")
+  var response = ContentService.createTextOutput("Tadbir API is working")
     .setMimeType(ContentService.MimeType.TEXT);
+
+  // إضافة رؤوس CORS لدعم الوصول من مصادر مختلفة
+  response.appendHeader('Access-Control-Allow-Origin', '*');
+  response.appendHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  return response;
 }
