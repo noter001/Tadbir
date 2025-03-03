@@ -19,7 +19,9 @@
       }
     }
 
-    function sendData() {
+    function sendData(event) {
+      event.preventDefault(); // منع إرسال النموذج الافتراضي
+
       var formData = {
         name: document.getElementById("name").value,
         phone: document.getElementById("phone").value,
@@ -47,7 +49,6 @@
         alert("✅ تمت العملية بنجاح! (مع وجود خطأ في الرد، لكن البيانات تم إرسالها)");
         document.getElementById("form").reset();
       });
-
     }
   </script>
 </head>
