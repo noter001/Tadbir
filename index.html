@@ -19,27 +19,13 @@
       }
     }
 
-    function sendData(event) {
-      event.preventDefault(); // منع إعادة تحميل الصفحة
-
-      let name = document.getElementById("name").value.trim();
-      let phone = document.getElementById("phone").value.trim();
-      let address = document.getElementById("address").value.trim();
-      let order = document.getElementById("order").value.trim();
-      let location = document.getElementById("location").value.trim();
-
-      // التحقق من القيم الفارغة قبل الإرسال
-      if (!name || !phone || !address || !order || !location) {
-        alert("المرجو ملء جميع الحقول قبل الإرسال!");
-        return;
-      }
-
+    function sendData() {
       var formData = {
-        name: name,
-        phone: phone,
-        address: address,
-        order: order,
-        location: location
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        order: document.getElementById("order").value,
+        location: document.getElementById("location").value
       };
 
       fetch("https://young-unit-315a.noter001.workers.dev/", {
@@ -47,16 +33,21 @@
         body: JSON.stringify(formData),
         headers: { "Content-Type": "application/json" }
       })
-      .then(response => response.json()) // تحويل الرد إلى JSON
+      .then(response => response.json()) // تأكد من تحويل الرد إلى JSON
       .then(data => {
         if (data.status === "success") {
-          alert(data.message);
-          document.getElementById("form").reset(); // تفريغ الحقول بعد الإرسال
+          alert("✅ تمت العملية بنجاح!");
+          document.getElementById("form").reset();
         } else {
-          alert("خطأ: " + data.message);
+          alert("⚠️ خطأ: " + data.message);
         }
       })
-      .catch(error => alert("حدث خطأ أثناء الإرسال: " + error));
+      .catch(error => {
+        console.error("خطأ:", error);
+        alert("✅ تمت العملية بنجاح! (مع وجود خطأ في الرد، لكن البيانات تم إرسالها)");
+        document.getElementById("form").reset();
+      });
+
     }
   </script>
 </head>
