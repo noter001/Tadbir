@@ -18,20 +18,20 @@
               position.coords.latitude + ", " + position.coords.longitude;
           },
           function(error) {
-            alert("خطأ في تحديد الموقع: " + error.message);
+            alert("⚠️ خطأ في تحديد الموقع: " + error.message);
           }
         );
       } else {
-        alert("المتصفح لا يدعم تحديد الموقع الجغرافي.");
+        alert("⚠️ المتصفح لا يدعم تحديد الموقع الجغرافي.");
       }
     }
 
-    function sendData(event) {
+    async function sendData(event) {
       event.preventDefault();
-      
+
       let sendButton = document.getElementById("sendButton");
       sendButton.disabled = true;
-      sendButton.textContent = "جاري الإرسال...";
+      sendButton.textContent = "⏳ جاري الإرسال...";
 
       let formData = {
         name: document.getElementById("name").value.trim(),
@@ -48,34 +48,31 @@
         return;
       }
 
-      fetch("https://young-unit-315a.noter001.workers.dev/", {
-  method: "POST",
-  body: JSON.stringify(formData),
-  headers: { "Content-Type": "application/json" }
-})
-.then(response => response.json()) // تأكد من تحويل الرد إلى JSON
-.then(data => {
-  console.log("📩 Response from server:", data); // 🔍 طباعة الرد في وحدة التحكم
-  if (data.status === "success") {
-    alert("✅ تمت العملية بنجاح!");
-    document.getElementById("form").reset();
-  } else {
-    alert("⚠️ خطأ: " + data.message);
-  }
-})
-.catch(error => {
-  console.error("❌ خطأ في الشبكة:", error);
-  alert("⚠️ حدث خطأ أثناء إرسال البيانات.");
-});
+      try {
+        let response = await fetch("https://young-unit-315a.noter001.workers.dev/", {
+          method: "POST",
+          body: JSON.stringify(formData),
+          headers: { "Content-Type": "application/json" }
+        });
 
-      .catch(error => {
-        console.error("خطأ:", error);
+        let data = await response.json();
+        console.log("📩 Response from server:", data); // 🔍 فحص الرد في Console
+
+        if (data.status === "success") {
+          alert("✅ تمت العملية بنجاح!");
+          document.getElementById("form").reset();
+        } else {
+          alert("⚠️ خطأ: " + data.message);
+        }
+
+      } catch (error) {
+        console.error("❌ خطأ في الشبكة:", error);
         alert("⚠️ حدث خطأ أثناء إرسال البيانات.");
-      })
-      .finally(() => {
+
+      } finally {
         sendButton.disabled = false;
         sendButton.textContent = "إرسال";
-      });
+      }
     }
   </script>
 </head>
@@ -97,4 +94,3 @@
   </form>
 </body>
 </html>
-
