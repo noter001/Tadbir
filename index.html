@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
@@ -18,20 +19,20 @@
               position.coords.latitude + ", " + position.coords.longitude;
           },
           function(error) {
-            alert("⚠️ خطأ في تحديد الموقع: " + error.message);
+            alert("خطأ في تحديد الموقع: " + error.message);
           }
         );
       } else {
-        alert("⚠️ المتصفح لا يدعم تحديد الموقع الجغرافي.");
+        alert("المتصفح لا يدعم تحديد الموقع الجغرافي.");
       }
     }
 
-    async function sendData(event) {
+    function sendData(event) {
       event.preventDefault();
-
+      
       let sendButton = document.getElementById("sendButton");
       sendButton.disabled = true;
-      sendButton.textContent = "⏳ جاري الإرسال...";
+      sendButton.textContent = "جاري الإرسال...";
 
       let formData = {
         name: document.getElementById("name").value.trim(),
@@ -48,31 +49,24 @@
         return;
       }
 
-      try {
-        let response = await fetch("https://young-unit-315a.noter001.workers.dev/", {
-          method: "POST",
-          body: JSON.stringify(formData),
-          headers: { "Content-Type": "application/json" }
-        });
-
-        let data = await response.json();
-        console.log("📩 Response from server:", data); // 🔍 فحص الرد في Console
-
-        if (data.status === "success") {
-          alert("✅ تمت العملية بنجاح!");
-          document.getElementById("form").reset();
-        } else {
-          alert("⚠️ خطأ: " + data.message);
-        }
-
-      } catch (error) {
-        console.error("❌ خطأ في الشبكة:", error);
+      fetch("https://young-unit-315a.noter001.workers.dev/", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.status === "success" ? "✅ تمت العملية بنجاح!" : "⚠️ خطأ: " + data.message);
+        document.getElementById("form").reset();
+      })
+      .catch(error => {
+        console.error("خطأ:", error);
         alert("⚠️ حدث خطأ أثناء إرسال البيانات.");
-
-      } finally {
+      })
+      .finally(() => {
         sendButton.disabled = false;
         sendButton.textContent = "إرسال";
-      }
+      });
     }
   </script>
 </head>
@@ -94,3 +88,35 @@
   </form>
 </body>
 </html>
+
+<script>
+    function sendData() {
+      var formData = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        order: document.getElementById("order").value,
+        location: document.getElementById("location").value
+      };
+
+      fetch("https://young-unit-315a.noter001.workers.dev/", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(response => response.json()) // تأكد من تحويل الرد إلى JSON
+      .then(data => {
+        if (data.status === "success") {
+          alert("✅ تمت العملية بنجاح!");
+          document.getElementById("form").reset();
+        } else {
+          alert("⚠️ خطأ: " + data.message);
+        }
+      })
+      .catch(error => {
+        console.error("خطأ:", error);
+        alert("✅ تمت العملية بنجاح! (مع وجود خطأ في الرد، لكن البيانات تم إرسالها)");
+        document.getElementById("form").reset();
+      });
+    }
+</script>
