@@ -51,27 +51,39 @@
       console.log("🔹 إرسال البيانات:", formData);
 
       fetch("https://young-unit-315a.noter001.workers.dev/", {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(response => {
-        console.log("🔹 استجابة السيرفر:", response);
-        return response.json();
-      })
-      .then(data => {
-        console.log("🔹 البيانات المستلمة:", data);
-        alert(data.status === "success" ? "✅ تمت العملية بنجاح!" : "⚠️ خطأ: " + data.message);
-        document.getElementById("form").reset();
-      })
-      .catch(error => {
-        console.error("❌ خطأ أثناء الإرسال:", error);
-        alert("⚠️ حدث خطأ أثناء إرسال البيانات.");
-      })
-      .finally(() => {
-        sendButton.disabled = false;
-        sendButton.textContent = "إرسال";
-      });
+  method: "POST",
+  body: JSON.stringify(formData),
+  headers: { "Content-Type": "application/json" }
+})
+.then(response => response.text()) // اجلب الرد كـ نص أولًا
+.then(text => {
+  console.log("🔹 نص الرد:", text);
+  let data;
+  try {
+    data = JSON.parse(text); // حاول تحويله إلى JSON
+  } catch (e) {
+    console.error("❌ فشل في تحويل الرد إلى JSON", e);
+    alert("⚠️ خطأ غير متوقع في استجابة السيرفر.");
+    return;
+  }
+
+  console.log("🔹 البيانات المستلمة:", data);
+  if (data.status === "success") {
+    alert("✅ تمت العملية بنجاح!");
+    document.getElementById("form").reset();
+  } else {
+    alert("⚠️ خطأ: " + (data.message || "لم يتم إرجاع استجابة صحيحة من السيرفر."));
+  }
+})
+.catch(error => {
+  console.error("❌ خطأ أثناء الإرسال:", error);
+  alert("⚠️ حدث خطأ أثناء إرسال البيانات.");
+})
+.finally(() => {
+  sendButton.disabled = false;
+  sendButton.textContent = "إرسال";
+});
+
     }
   </script>
 </head>
