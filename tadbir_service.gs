@@ -1,3 +1,4 @@
+الثاني
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.openById("1g5iK44QyOGrbE5i1_YBCmJe3RtyuF6EFfr1QHPRyCXM").getActiveSheet();
@@ -16,8 +17,8 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
     
-    // إضافة البيانات إلى الجدول
-    sheet.appendRow([
+    // إضافة البيانات في الصف العلوي بدءًا من الصف 2 باستخدام دالة insertDataAtTop
+    insertDataAtTop([
       data.date_time,         // وقت الإدخال
       data.id,                // معرف الطلب
       data.name.trim(),       // الاسم
@@ -36,6 +37,15 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({status: "error", message: error.toString()}))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function insertDataAtTop(data) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  // إدراج صفوف جديدة بدءًا من الصف 2
+  sheet.insertRows(2, 1); // إضافة صف جديد في الصف 2
+  // إدخال البيانات في الصف الجديد
+  var range = sheet.getRange(2, 1, 1, data.length);
+  range.setValues([data]);
 }
 
 // معالجة CORS لمنع أخطاء الشبكة
