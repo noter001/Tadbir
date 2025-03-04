@@ -1,4 +1,3 @@
-الثاني
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.openById("1g5iK44QyOGrbE5i1_YBCmJe3RtyuF6EFfr1QHPRyCXM").getActiveSheet();
