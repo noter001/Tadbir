@@ -34,15 +34,55 @@
         sendButton.textContent = "جاري الإرسال...";
 
         let formData = {
+            date_time: new Date().toLocaleString("fr-FR"),
+            id: "TDB-" + Math.floor(100000 + Math.random() * 900000),
             name: document.getElementById("name").value.trim(),
-            phone: document.getElementById("phone").value.trim(),
+            phone: document.getElementById("phone").value.trim(), // التعامل مع الهاتف كنص لضمان عدم فقدان الصفر الأول
             address: document.getElementById("address").value.trim(),
             order: document.getElementById("order").value,
-            location: document.getElementById("location").value.trim()
+            location: document.getElementById("location").value.trim(),
+            societe: document.getElementById("societe").value.trim(),
+            address_societe: document.getElementById("address_societe").value.trim()
         };
 
-        if (!formData.name || !formData.phone || !formData.address || !formData.order || !formData.location) {
-            alert("⚠️ المرجو ملء جميع الحقول قبل الإرسال!");
+        if (!formData.name || formData.name.length > 40) {
+            alert("⚠️ الاسم يجب أن يكون أقل من 40 حرفًا!");
+            sendButton.disabled = false;
+            sendButton.textContent = "إرسال";
+            return;
+        }
+        if (!/^\d{10}$/.test(formData.phone)) {
+            alert("⚠️ رقم الهاتف يجب أن يكون 10 أرقام!");
+            sendButton.disabled = false;
+            sendButton.textContent = "إرسال";
+            return;
+        }
+        if (!formData.address || formData.address.length > 100) {
+            alert("⚠️ العنوان يجب أن يكون أقل من 100 حرف!");
+            sendButton.disabled = false;
+            sendButton.textContent = "إرسال";
+            return;
+        }
+        if (!formData.order) {
+            alert("⚠️ المرجو اختيار نوع الخدمة!");
+            sendButton.disabled = false;
+            sendButton.textContent = "إرسال";
+            return;
+        }
+        if (!formData.location) {
+            alert("⚠️ المرجو الضغط على زر تحديد موقعي!");
+            sendButton.disabled = false;
+            sendButton.textContent = "إرسال";
+            return;
+        }
+        if (!formData.societe || formData.societe.length > 40) {
+            alert("⚠️ اسم الشركة يجب أن يكون أقل من 40 حرفًا!");
+            sendButton.disabled = false;
+            sendButton.textContent = "إرسال";
+            return;
+        }
+        if (!formData.address_societe || formData.address_societe.length > 100) {
+            alert("⚠️ عنوان الشركة يجب أن يكون أقل من 100 حرف!");
             sendButton.disabled = false;
             sendButton.textContent = "إرسال";
             return;
@@ -57,7 +97,7 @@
         .then(data => {
             alert("✅ تمت العملية بنجاح!");
             setTimeout(() => {
-                window.location.reload(); // تحديث الصفحة بعد الإرسال
+                window.location.reload();
             }, 1500);
         })
         .catch(error => {
@@ -73,22 +113,24 @@
         });
     }
 </script>
-
 </head>
 <body>
   <h2>tadbir_service</h2>
   <form id="form">
-    <input type="text" id="name" placeholder="الاسم" required><br>
-    <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
-    <input type="text" id="address" placeholder="العنوان" required><br>
+    <input type="hidden" id="date_time">
+    <input type="hidden" id="id">
+    <input type="text" id="name" placeholder="الاسم" maxlength="40" required><br>
+    <input type="text" id="phone" placeholder="رقم الهاتف" pattern="\d{10}" required><br>
+    <input type="text" id="address" placeholder="العنوان" maxlength="100" required><br>
     <select id="order" required>
-      <option value="">اختر منتجًا</option>
-      <option value="منتج 1">منتج 1</option>
-      <option value="منتج 2">منتج 2</option>
-      <option value="منتج 3">منتج 3</option>
+      <option value="">اختر نوع الخدمة</option>
+      <option value="إيـداع فقط (30 درهم)">إيـداع فقط (30 درهم)</option>
+      <option value="إيـداع و استرجاع (50 درهم)">إيـداع و استرجاع (50 درهم)</option>
     </select><br>
-    <input type="text" id="location" placeholder="الموقع الجغرافي" readonly>
+    <input type="text" id="location" placeholder="المرجوا الضغط على زر تحديد موقعي" readonly>
     <button type="button" onclick="getLocation()">📍 تحديد موقعي</button><br>
+    <input type="text" id="societe" placeholder="اسم الشركة" maxlength="40" required><br>
+    <input type="text" id="address_societe" placeholder="عنوان الشركة" maxlength="100" required><br>
     <button type="submit" id="sendButton" onclick="sendData(event)">إرسال</button>
   </form>
 </body>
