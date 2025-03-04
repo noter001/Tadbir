@@ -36,10 +36,10 @@
 
     function sendData(event) {
         event.preventDefault();
-
         let sendButton = document.getElementById("sendButton");
         sendButton.disabled = true;
         sendButton.textContent = "جاري الإرسال...";
+        console.log("🔹 بدأ إرسال البيانات...");
 
         let formData = {
             date_time: new Date().toLocaleString("fr-FR"),
@@ -53,6 +53,7 @@
             address_societe: document.getElementById("address_societe").value.trim()
         };
 
+        console.log("🔹 البيانات التي سيتم إرسالها:", formData);
         let hasError = false;
 
         if (!formData.name || formData.name.length > 40) {
@@ -98,6 +99,7 @@
         } else { removeHighlight("address_societe"); }
 
         if (hasError) {
+            console.warn("⚠️ تم اكتشاف خطأ في الإدخال، لن يتم الإرسال.");
             sendButton.disabled = false;
             sendButton.textContent = "إرسال";
             return;
@@ -108,21 +110,24 @@
             body: JSON.stringify(formData),
             headers: { "Content-Type": "application/json" }
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log("🔹 استجابة السيرفر:", response);
+            return response.json();
+        })
         .then(data => {
-            alert("✅ تمت العملية بنجاح!");
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
+            console.log("🔹 البيانات المستلمة من السيرفر:", data);
+            if (data.status === "success") {
+                alert("✅ تمت العملية بنجاح!");
+                setTimeout(() => { window.location.reload(); }, 1500);
+            } else {
+                alert("⚠️ خطأ: " + data.message);
+                sendButton.disabled = false;
+                sendButton.textContent = "إرسال";
+            }
         })
         .catch(error => {
             console.error("❌ خطأ أثناء الإرسال:", error);
-            alert("✅ تمت العملية بنجاح! (مع وجود خطأ غير مؤثر)");
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        })
-        .finally(() => {
+            alert("⚠️ حدث خطأ أثناء الإرسال، حاول مرة أخرى.");
             sendButton.disabled = false;
             sendButton.textContent = "إرسال";
         });
@@ -132,10 +137,8 @@
 <body>
   <h2>tadbir_service</h2>
   <form id="form">
-    <input type="hidden" id="date_time">
-    <input type="hidden" id="id">
     <input type="text" id="name" placeholder="الاسم" maxlength="40" required><br>
-    <input type="text" id="phone" placeholder="رقم الهاتف" pattern="\d{10}" required><br>
+    <input type="text" id="phone" placeholder="رقم الهاتف" pattern="\\d{10}" required><br>
     <input type="text" id="address" placeholder="العنوان" maxlength="100" required><br>
     <select id="order" required>
       <option value="">اختر نوع الخدمة</option>
