@@ -39,8 +39,3 @@ function doPost(e) {
 }
 
 
-// معالجة CORS لمنع أخطاء الشبكة
-function doGet(e) {
-  return ContentService.createTextOutput("CORS Enabled")
-    .setMimeType(ContentService.MimeType.JSON);
-}
