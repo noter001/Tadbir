@@ -4,8 +4,8 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
 
     // التحقق من الحقول الفارغة
-    if (!data.name || !data.phone || !data.address || !data.order || !data.location) {
-      return ContentService.createTextOutput(JSON.stringify({status: "error", message: "المرجو ملء جميع الحقول قبل الإرسال!"}))
+    if (!data.name || !data.phone || !data.address || !data.order || !data.location || !data.societe || !data.address_societe) {
+      return ContentService.createTextOutput(JSON.stringify({status: "error", message: "⚠️ المرجو ملء جميع الحقول!"}))
         .setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -18,26 +18,28 @@ function doPost(e) {
     
     // إضافة البيانات إلى الجدول
     sheet.appendRow([
-      data.name.trim(),
-      data.phone.trim(),
-      data.address.trim(),
-      data.order,
-      data.location.trim(),
-      new Date()
+      data.date_time,         // وقت الإدخال
+      data.id,                // معرف الطلب
+      data.name.trim(),       // الاسم
+      data.phone.trim(),      // رقم الهاتف
+      data.address.trim(),    // العنوان
+      data.order,             // نوع الطلب
+      data.location.trim(),   // الموقع الجغرافي
+      data.societe.trim(),    // اسم الشركة
+      data.address_societe.trim() // عنوان الشركة
     ]);
 
-    var output = ContentService.createTextOutput(JSON.stringify({status: "success", message: "تم إرسال البيانات بنجاح!"}))
+    return ContentService.createTextOutput(JSON.stringify({status: "success", message: "✅ تم إرسال البيانات بنجاح!"}))
       .setMimeType(ContentService.MimeType.JSON);
-    
-    // إضافة CORS headers لمنع أخطاء الشبكة
-    output.setHeader("Access-Control-Allow-Origin", "*");
-    output.setHeader("Access-Control-Allow-Methods", "POST, GET");
-    output.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-    return output;
   
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({status: "error", message: error.toString()}))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+// معالجة CORS لمنع أخطاء الشبكة
+function doGet(e) {
+  return ContentService.createTextOutput("CORS Enabled")
+    .setMimeType(ContentService.MimeType.JSON);
 }
