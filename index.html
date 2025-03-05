@@ -130,10 +130,36 @@
         });
     }
 </script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استمارة الطلب</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .header img {
+            max-width: 150px; /* حجم الشعار */
+        }
+        .header h1 {
+            margin: 10px 0;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
-  <h2>tadbir_service</h2>
-  <form id="form">
+
+    <div class="header">
+        <img src="LOGO_TADBIR.png" alt="شعار الشركة">
+        <h1>استمارة تقديم الطلب</h1>
+    </div>
+
+    <form id="myForm">
+        <!-- باقي حقول الاستمارة -->
     <input type="hidden" id="date_time">
     <input type="hidden" id="id">
     <input type="text" id="name" placeholder="الاسم" maxlength="40" required><br>
