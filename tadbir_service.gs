@@ -26,7 +26,8 @@ function doPost(e) {
       data.order,             // نوع الطلب
       data.location.trim(),   // الموقع الجغرافي
       data.societe.trim(),    // اسم الشركة
-      data.address_societe.trim() // عنوان الشركة
+      data.address_societe.trim()  // عنوان الشركة
+      data.location.trim(),   // الموقع الجغرافي
     ]);
 
     return ContentService.createTextOutput(JSON.stringify({status: "success", message: "✅ تم إرسال البيانات بنجاح!"}))
