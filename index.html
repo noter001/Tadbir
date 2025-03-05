@@ -57,6 +57,7 @@
             address: document.getElementById("address").value.trim(),
             order: document.getElementById("order").value,
             location: document.getElementById("location").value.trim(),
+            location: document.getElementById("location").value.trim() || "N/A",  // وضع "N/A" إذا لم يتم تحديد الموقع
             societe: document.getElementById("societe").value.trim(),
             address_societe: document.getElementById("address_societe").value.trim()
         };
